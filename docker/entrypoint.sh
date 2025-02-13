@@ -32,11 +32,19 @@ else
     Xvfb :99 -screen 0 1024x768x24 &
 fi
 
-# 🔹 Ensure previous Gazebo processes are killed before starting
+# 🔹 Ensure previous Gazebo processes are completely killed before starting
 echo "🛑 Killing any existing Gazebo processes..."
 pkill -f gzserver || true
 pkill -f gzclient || true
 sleep 2  # Give it time to fully terminate
+
+# 🔹 Ensure Gazebo binds to a different port if the default is already in use
+if ss -tulnp | grep -q ":11345"; then
+    echo "⚠️ Port 11345 is already in use. Binding Gazebo to a new port..."
+    export GAZEBO_MASTER_URI=http://127.0.0.1:11346
+else
+    export GAZEBO_MASTER_URI=http://127.0.0.1:11345
+fi
 
 # Start Gazebo in **strict headless mode**, without `gzclient`
 echo "📡 Launching Gazebo in headless mode (no GUI, only server)..."
