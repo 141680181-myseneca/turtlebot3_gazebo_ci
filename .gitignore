@@ -28,4 +28,52 @@ ros_ws/build/
 ros_ws/devel/
 ros_ws/install/
 ros_ws/log/
-ros_ws/.cat
+ros_ws/.catkin_tools/
+gazebo/logs/
+gazebo/models/
+gazebo/worlds/.backup/
+
+# Ignore GitHub Actions runner files
+.github/workflows/*.log
+.github/workflows/*.cache
+.github/workflows/*.tmp
+
+# Ignore simulation output data
+data/*.bag
+data/*.csv
+data/*.json
+data/*.yaml
+data/processed/
+data/raw/
+
+# Ignore compiled binaries
+bin/
+build/
+*.so
+*.o
+*.a
+*.exe
+*.out
+*.swp
+*.swo
+
+# Ignore VSCode settings
+.vscode/
+*.code-workspace
+
+# Ignore JetBrains IDEs (PyCharm, CLion, etc.)
+.idea/
+*.iml
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore test artifacts
+tests/*.log
+tests/output/
+coverage/
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.swo
