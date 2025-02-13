@@ -7,14 +7,17 @@ RUN apt-get update && apt-get install -y \
     ros-humble-turtlebot3-gazebo \
     ros-humble-turtlebot3-msgs \
     ros-humble-turtlebot3-simulations \
+    ros-humble-turtlebot3-description \  # 🔥 Ensure this package is installed
     xvfb  # Install X virtual framebuffer for headless mode \
     && rm -rf /var/lib/apt/lists/*
 
-# Set default environment variable for TurtleBot3 model
+# Set default environment variables for headless mode
 ENV TURTLEBOT3_MODEL=burger
 ENV DISPLAY=:99
 ENV QT_QPA_PLATFORM=offscreen
 ENV GAZEBO_RENDERING=0
+ENV GAZEBO_HEADLESS_RENDERING=1
+ENV SVGA_VGPU10=0  # Prevents graphical issues in virtualized environments
 
 # Copy the entrypoint script into the container
 COPY entrypoint.sh /entrypoint.sh
