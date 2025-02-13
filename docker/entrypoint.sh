@@ -96,8 +96,12 @@ echo "✅ Simulation Ready! TurtleBot3 is in Gazebo."
 # Kill any stray gzclient process (to prevent duplicate GUI attempts)
 pkill -9 -f gzclient || true
 
+echo "✅ Simulation Ready! TurtleBot3 is in Gazebo."
+exit 0
+
+
 # Keep the container alive without launching additional processes
-tail -f /dev/null
+# tail -f /dev/null
 
 # Issue	Fix
 # netstat: command not found	Replaced netstat with lsof, which is more widely available
@@ -118,4 +122,4 @@ tail -f /dev/null
 # Below is the updated entrypoint script that avoids launching duplicate Gazebo GUI 
 # processes by using the ROS 2 launch file with the GUI disabled. It no longer manually 
 # launches gzserver, so that only one headless Gazebo server is running. After that, 
-# it waits for the spawn service and spawns the TurtleBot3 once.
+# it waits for the spawn service and spawns the TurtleBot3 once.   
