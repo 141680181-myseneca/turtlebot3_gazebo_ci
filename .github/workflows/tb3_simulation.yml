@@ -23,39 +23,39 @@ jobs:
         run: |
           docker build -t tb3_sim ./docker
 
-      - name: 🚀 Run Simulation in Headless Mode (Sanity Check)
-        run: |
-          docker run --rm -e TURTLEBOT3_MODEL=burger tb3_sim bash -c "
-          source /opt/ros/humble/setup.bash;
-          export DISPLAY=:99;
-          export QT_QPA_PLATFORM=offscreen;
-          export GAZEBO_RENDERING=0;
-
-          # 1) Start a virtual display
-          Xvfb :99 -screen 0 1024x768x24 &
-          sleep 2
-
-          # 2) Launch Gazebo server in headless mode
-          gzserver --headless /usr/share/gazebo-11/worlds/empty.world &
-          sleep 5
-
-          # 3) Spawn TurtleBot3
-          ros2 run gazebo_ros spawn_entity.py -entity tb3 \
-          -file /opt/ros/humble/share/turtlebot3_description/urdf/turtlebot3_burger.urdf
-          echo '✅ TurtleBot3 spawn successful!'
-
-          # 4) (Optional) Run any additional checks/tests here...
-
-          # 5) Kill Gazebo so the container can exit
-          pkill -9 gzserver || true
-          pkill -9 gzclient || true
-
-          # 6) Kill Xvfb as well
-          pkill -9 -f 'Xvfb :99' || true
-
-          # End of the script -> container exits
-          exit 0
-          "
+          - name: 🚀 Run Simulation in Headless Mode (Sanity Check)
+          run: |
+            docker run --rm --name tb3_sim \
+              -e TURTLEBOT3_MODEL=burger \
+              tb3_sim \
+              bash -c "
+              source /opt/ros/humble/setup.bash
+        
+              # Start a virtual display
+              Xvfb :99 -screen 0 1024x768x24 &
+              sleep 2
+        
+              # Launch Gazebo server in headless mode
+              gzserver --headless /usr/share/gazebo-11/worlds/empty.world &
+              sleep 5
+        
+              # Spawn TurtleBot3
+              ros2 run gazebo_ros spawn_entity.py -entity tb3 \
+                -file /opt/ros/humble/share/turtlebot3_description/urdf/turtlebot3_burger.urdf
+              echo '✅ TurtleBot3 spawn successful!'
+        
+              # (Optional) run any quick checks here...
+        
+              # Kill Gazebo so the container can exit
+              pkill -9 gzserver || true
+              pkill -9 gzclient || true
+        
+              # Kill Xvfb as well
+              pkill -9 -f 'Xvfb :99' || true
+        
+              exit 0
+              "
+        
 
 
       - name: ✅ Run TurtleBot3 Spawn Test
