@@ -22,6 +22,8 @@ docker/*.tar
 docker-compose.override.yml
 .dockerignore
 *.container
++ !docker/Dockerfile
++ !docker/entrypoint.sh
 
 # Ignore ROS and Gazebo generated files
 ros_ws/build/
@@ -32,6 +34,7 @@ ros_ws/.catkin_tools/
 gazebo/logs/
 gazebo/models/
 gazebo/worlds/.backup/
++ !gazebo/worlds/*.world  # Allow world files to be tracked
 
 # Ignore GitHub Actions runner files
 .github/workflows/*.log
