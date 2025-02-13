@@ -19,10 +19,15 @@ jobs:
 
       # 2) (Optional) Example of forcing bash for a custom script
       - name: Build and Run (Example Step)
+        run: docker build -t tb3_sim ./docker
+
+      - name: 🔧 Make entrypoint.sh Executable & Run It
         shell: bash
         run: |
           echo "Using Bash instead of sh"
-          ./entrypoint.sh
+          chmod +x docker/entrypoint.sh
+          ./docker/entrypoint.sh
+    
 
       # 3) Set up Docker BuildX
       - name: 🛠️ Set up Docker BuildX
