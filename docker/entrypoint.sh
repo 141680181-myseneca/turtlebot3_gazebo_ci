@@ -24,8 +24,19 @@ export SVGA_VGPU10=0  # Prevents crashes in virtualized environments
 
 echo "🛠️ Using TurtleBot3 Model: $TURTLEBOT3_MODEL"
 
-# Start X Virtual Framebuffer (xvfb) to simulate a display
-Xvfb :99 -screen 0 1024x768x24 &
+# 🔹 Ensure Xvfb isn't already running
+if pgrep Xvfb > /dev/null; then
+    echo "⚠️ Xvfb is already running, skipping..."
+else
+    echo "📡 Starting Xvfb..."
+    Xvfb :99 -screen 0 1024x768x24 &
+fi
+
+# 🔹 Ensure previous Gazebo processes are killed before starting
+echo "🛑 Killing any existing Gazebo processes..."
+pkill -f gzserver || true
+pkill -f gzclient || true
+sleep 2  # Give it time to fully terminate
 
 # Start Gazebo in **strict headless mode**, without `gzclient`
 echo "📡 Launching Gazebo in headless mode (no GUI, only server)..."
@@ -60,6 +71,11 @@ timeout 30 bash -c 'until ros2 service list | grep -q /spawn_entity; do sleep 1;
     echo "❌ ERROR: /spawn_entity service not available. Gazebo may not have loaded correctly."
     exit 1
 }
+
+# 🔹 Remove previous TurtleBot3 instances to prevent duplication
+echo "🧹 Removing any existing TurtleBot3 instances..."
+ros2 service call /delete_entity gazebo_msgs/srv/DeleteEntity "{name: 'tb3'}" || true
+sleep 2
 
 echo "🤖 Spawning TurtleBot3..."
 ros2 run gazebo_ros spawn_entity.py -entity tb3 -file "$URDF_PATH"
