@@ -44,10 +44,15 @@ pkill -f gzclient || true
 sleep 2  # Give it time to fully terminate
 
 # 🔹 Ensure Gazebo binds to a different port if the default is already in use
-if netstat -tulnp | grep -q ":11345"; then
-    echo "⚠️ Port 11345 is already in use. Binding Gazebo to a new port..."
-    export GAZEBO_MASTER_URI=http://127.0.0.1:11346
+if command -v lsof > /dev/null; then
+    if lsof -i :11345 > /dev/null; then
+        echo "⚠️ Port 11345 is already in use. Binding Gazebo to a new port..."
+        export GAZEBO_MASTER_URI=http://127.0.0.1:11346
+    else
+        export GAZEBO_MASTER_URI=http://127.0.0.1:11345
+    fi
 else
+    echo "⚠️ lsof is not installed, skipping port check..."
     export GAZEBO_MASTER_URI=http://127.0.0.1:11345
 fi
 
@@ -97,3 +102,10 @@ echo "✅ Simulation Ready! TurtleBot3 is in Gazebo."
 
 # Keep container running interactively
 exec "$@"
+
+
+# Issue	Fix
+# netstat: command not found	Replaced netstat with lsof, which is more widely available
+# Xvfb Server Already Running	Check if /tmp/.X99-lock exists & remove it before starting
+# Gazebo "Address already in use" error	Kill old Gazebo processes & bind to a new port if needed
+# Entity [tb3] already exists	Remove existing TurtleBot3 entities before spawning
