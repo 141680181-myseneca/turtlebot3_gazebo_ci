@@ -9,15 +9,16 @@ source /opt/ros/humble/setup.bash
 # Set the correct TurtleBot3 model (default: burger)
 export TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL:-burger}
 
-# Disable audio to prevent ALSA errors
+# 🔹 Disable all audio processing to prevent ALSA/OpenAL errors
 export GAZEBO_AUDIO=0
 export SDL_AUDIODRIVER=dummy  # Prevents OpenAL issues
 
-# Ensure full headless mode
+# 🔹 Force full headless mode in Gazebo
 export DISPLAY=:99
-export QT_QPA_PLATFORM=minimal  # Force Qt to use minimal mode
+export QT_QPA_PLATFORM=offscreen  # Ensure Qt does not require X11
 export GAZEBO_RENDERING=0
 export GAZEBO_HEADLESS_RENDERING=1
+export GAZEBO_GUI=0  # 🔥 Prevent GUI plugins from loading
 export SVGA_VGPU10=0  # Prevents crashes in virtualized environments
 
 echo "🛠️ Using TurtleBot3 Model: $TURTLEBOT3_MODEL"
@@ -25,9 +26,9 @@ echo "🛠️ Using TurtleBot3 Model: $TURTLEBOT3_MODEL"
 # Start X Virtual Framebuffer (xvfb) to simulate a display
 Xvfb :99 -screen 0 1024x768x24 &
 
-# Start Gazebo in **fully headless mode** with the required ROS plugin
-echo "📡 Launching Gazebo with ROS plugins in full headless mode..."
-gazebo --verbose /usr/share/gazebo-11/worlds/empty.world --headless &
+# Start Gazebo in **fully headless mode** with no GUI elements
+echo "📡 Launching Gazebo in headless mode..."
+gzserver --verbose /usr/share/gazebo-11/worlds/empty.world --headless &
 
 sleep 5  # Allow Gazebo to initialize
 
