@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-turtlebot3-msgs \
     ros-humble-turtlebot3-simulations \
     ros-humble-turtlebot3-description \  # 🔥 Ensure this package is installed
-    xvfb  # Install X virtual framebuffer for headless mode \
+    xvfb && \ # Install X virtual framebuffer for headless mode \
     && rm -rf /var/lib/apt/lists/*
 
 # Set default environment variables for headless mode
