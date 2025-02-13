@@ -9,8 +9,9 @@ RUN apt-get update && apt-get install -y \
     ros-humble-turtlebot3-simulations \
     ros-humble-turtlebot3-description \
     xvfb \
-    lsof && \  # 🔹 Install `lsof` to check for running ports
+    lsof && \  
     rm -rf /var/lib/apt/lists/*
+
 
 # Install system dependencies separately (including xvfb)
 RUN apt-get update && apt-get install -y \
