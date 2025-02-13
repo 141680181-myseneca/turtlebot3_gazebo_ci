@@ -12,6 +12,7 @@ export TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL:-burger}
 # 🔹 Disable all audio processing to prevent ALSA/OpenAL errors
 export GAZEBO_AUDIO=0
 export SDL_AUDIODRIVER=dummy  # Prevents OpenAL issues
+export PULSE_SERVER=""  # Ensures PulseAudio does not start
 
 # 🔹 Force full headless mode in Gazebo
 export DISPLAY=:99
@@ -26,15 +27,15 @@ echo "🛠️ Using TurtleBot3 Model: $TURTLEBOT3_MODEL"
 # Start X Virtual Framebuffer (xvfb) to simulate a display
 Xvfb :99 -screen 0 1024x768x24 &
 
-# Start Gazebo in **fully headless mode** with no GUI elements
-echo "📡 Launching Gazebo in headless mode..."
-gzserver --verbose /usr/share/gazebo-11/worlds/empty.world --headless &
+# Start Gazebo in **strict headless mode**, without `gzclient`
+echo "📡 Launching Gazebo in headless mode (no GUI, only server)..."
+gzserver --verbose /usr/share/gazebo-11/worlds/empty.world -s libgazebo_ros_init.so -s libgazebo_ros_factory.so &
 
 sleep 5  # Allow Gazebo to initialize
 
 # Verify if Gazebo is running
 if ! pgrep -x "gzserver" > /dev/null; then
-    echo "❌ ERROR: Gazebo failed to start!"
+    echo "❌ ERROR: Gazebo server failed to start!"
     exit 1
 fi
 
