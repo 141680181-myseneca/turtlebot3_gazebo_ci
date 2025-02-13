@@ -1,0 +1,31 @@
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
+
+# Ignore logs and temporary files
+logs/
+*.log
+*.out
+*.err
+nohup.out
+
+# Ignore built Docker images and containers
+docker/*.tar
+docker-compose.override.yml
+.dockerignore
+*.container
+
+# Ignore ROS and Gazebo generated files
+ros_ws/build/
+ros_ws/devel/
+ros_ws/install/
+ros_ws/log/
+ros_ws/.cat
