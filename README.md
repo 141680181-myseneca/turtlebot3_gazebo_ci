@@ -67,7 +67,7 @@ Before running this project, ensure you have:
 ### 🔹 Clone the Repository
 
 ~~~bash
-git clone https://github.com/yourusername/turtlebot3_gazebo_ci.git
+git clone https://github.com/141680181-myseneca/turtlebot3_gazebo_ci.git
 cd turtlebot3_gazebo_ci
 ~~~
 
@@ -99,7 +99,8 @@ When you push code to the main branch, GitHub Actions will:
 To manually trigger the pipeline:
 
 ~~~bash
-git push origin main
+git push origin turtlebot3_gazebo_ci
+
 ~~~
 
 *Alternatively, trigger via GitHub Actions > Workflows.*
