@@ -6,7 +6,7 @@ echo "🚀 EntryPoint: Starting TurtleBot3 Gazebo Simulation..."
 # Source ROS 2 setup
 source /opt/ros/humble/setup.bash
 
-# Set the correct TurtleBot3 model (default: burger)
+# Set the TurtleBot3 model (default: burger)
 export TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL:-burger}
 
 # Disable audio processing to prevent ALSA/OpenAL errors
@@ -31,10 +31,10 @@ if [ -f "/tmp/.X99-lock" ]; then
     rm -f /tmp/.X99-lock
 fi
 
-# Kill any existing Xvfb running on display :99
+# Kill any existing Xvfb running on display :99 (forcefully)
 if pgrep -f "Xvfb :99" > /dev/null; then
     echo "⚠️ Killing existing Xvfb on display :99..."
-    pkill -f "Xvfb :99"
+    pkill -9 -f "Xvfb :99"
     sleep 1
 fi
 
@@ -43,11 +43,11 @@ echo "📡 Starting Xvfb on display :99..."
 Xvfb :99 -screen 0 1024x768x24 &
 sleep 2
 
-# Kill any existing Gazebo processes
+# Forcefully kill any existing Gazebo processes
 echo "🛑 Killing any existing Gazebo processes..."
-pkill -f gzserver || true
-pkill -f gzclient || true
-sleep 2
+pkill -9 -f gzserver || true
+pkill -9 -f gzclient || true
+sleep 5
 
 # Set Gazebo master URI based on port availability
 if command -v lsof > /dev/null; then
@@ -64,8 +64,9 @@ fi
 
 # Launch Gazebo server in headless mode (server only)
 echo "📡 Launching Gazebo in headless mode..."
-gzserver --verbose /usr/share/gazebo-11/worlds/empty.world -s libgazebo_ros_init.so -s libgazebo_ros_factory.so &
-sleep 5
+gzserver --verbose /usr/share/gazebo-11/worlds/empty.world \
+         -s libgazebo_ros_init.so -s libgazebo_ros_factory.so &
+sleep 10
 
 # Verify Gazebo server started successfully
 if ! pgrep -x "gzserver" > /dev/null; then
@@ -73,7 +74,7 @@ if ! pgrep -x "gzserver" > /dev/null; then
     exit 1
 fi
 
-# Ensure the URDF file exists before spawning the robot
+# Verify URDF file exists before spawning
 URDF_PATH="/opt/ros/humble/share/turtlebot3_description/urdf/turtlebot3_${TURTLEBOT3_MODEL}.urdf"
 if [[ ! -f "$URDF_PATH" ]]; then
     echo "❌ ERROR: URDF file not found: $URDF_PATH"
@@ -81,10 +82,10 @@ if [[ ! -f "$URDF_PATH" ]]; then
     exit 1
 fi
 
-# Start ROS 2 Gazebo bridge
+# Start the ROS 2 Gazebo bridge
 echo "🔄 Starting ROS 2 Gazebo Bridge..."
 ros2 launch gazebo_ros gazebo.launch.py &
-sleep 5
+sleep 10
 
 # Wait for /spawn_entity service to become available (timeout after 30s)
 echo "🔎 Waiting for /spawn_entity service..."
@@ -93,20 +94,23 @@ timeout 30 bash -c 'until ros2 service list | grep -q /spawn_entity; do sleep 1;
     exit 1
 }
 
-# Remove any existing TurtleBot3 instances to prevent duplication
-echo "🧹 Removing any existing TurtleBot3 instances..."
-ros2 service call /delete_entity gazebo_msgs/srv/DeleteEntity "{name: 'tb3'}" || true
-sleep 2
+# Attempt to remove any existing TurtleBot3 instance
+echo "🧹 Removing any existing TurtleBot3 instance..."
+for i in {1..3}; do
+    ros2 service call /delete_entity gazebo_msgs/srv/DeleteEntity "{name: 'tb3'}" && break || sleep 2;
+done
+sleep 5
 
 # Spawn TurtleBot3
 echo "🤖 Spawning TurtleBot3..."
 ros2 run gazebo_ros spawn_entity.py -entity tb3 -file "$URDF_PATH"
-sleep 2
+sleep 5
 
 echo "✅ Simulation Ready! TurtleBot3 is in Gazebo."
 
 # Keep the container running interactively
 exec "$@"
+
 
 
 # Issue	Fix
@@ -120,3 +124,7 @@ exec "$@"
 # Xvfb Server Already Running	Check if /tmp/.X99-lock exists & remove it before starting
 # Gazebo "Address already in use" error	Kill old Gazebo processes & bind to a new port if needed
 # Entity [tb3] already exists	Remove existing TurtleBot3 entities before spawning
+
+# an updated version of the entrypoint script that aims to fix the errors by ensuring any 
+# stale processes (Xvfb and Gazebo) are killed more forcefully, increasing wait times, 
+# and attempting to remove any existing TurtleBot3 entity before spawning a new one:
