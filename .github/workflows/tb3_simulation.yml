@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           echo "Using Bash instead of sh"
-          ./your_script_with_parentheses.sh
+          ./entrypoint.sh
 
       # 3) Set up Docker BuildX
       - name: 🛠️ Set up Docker BuildX
