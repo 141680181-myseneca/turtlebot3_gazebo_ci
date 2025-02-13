@@ -17,7 +17,8 @@ ENV DISPLAY=:99
 ENV QT_QPA_PLATFORM=offscreen
 ENV GAZEBO_RENDERING=0
 ENV GAZEBO_HEADLESS_RENDERING=1
-ENV SVGA_VGPU10=0  # Prevents graphical issues in virtualized environments
+ENV SVGA_VGPU10=0  
+# Prevents graphical issues in virtualized environments
 
 # Copy the entrypoint script into the container
 COPY entrypoint.sh /entrypoint.sh
