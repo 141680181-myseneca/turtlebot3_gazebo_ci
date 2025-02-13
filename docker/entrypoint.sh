@@ -108,6 +108,7 @@ echo "✅ Simulation Ready! TurtleBot3 is in Gazebo."
 # Keep the container running interactively
 exec "$@"
 
+
 # Issue	Fix
 # netstat: command not found	Replaced netstat with lsof, which is more widely available
 # Xvfb Server Already Running	Check if /tmp/.X99-lock exists & remove it before starting
