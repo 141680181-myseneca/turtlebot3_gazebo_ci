@@ -1,0 +1,41 @@
+name: TurtleBot3 Gazebo CI/CD
+
+on:
+  push:
+    branches:
+      - turtlebot3_gazebo_ci
+  pull_request:
+    branches:
+      - turtlebot3_gazebo_ci
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Set up Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🏗️ Build Docker Image
+        run: |
+          docker build -t tb3_sim ./docker
+
+      - name: 🚀 Run Simulation in Docker (Sanity Check)
+        run: |
+          docker run --rm -it -e TURTLEBOT3_MODEL=burger tb3_sim bash -c "
+          source /opt/ros/humble/setup.bash;
+          gazebo --verbose /usr/share/gazebo-11/worlds/empty.world & sleep 5;
+          ros2 run gazebo_ros spawn_entity.py -entity tb3 \
+          -file /opt/ros/humble/share/turtlebot3_description/urdf/turtlebot3_burger.urdf
+          "
+
+      - name: ✅ Run TurtleBot3 Spawn Test
+        run: |
+          bash tests/test_robot_spawn.sh
+
+      - name: 🧹 Clean Up Docker
+        if: always()
+        run: docker system prune -f

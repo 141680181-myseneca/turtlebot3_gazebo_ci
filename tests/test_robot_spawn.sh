@@ -1,13 +1,25 @@
 #!/bin/bash
-set -e
+set -e  # Exit immediately if a command fails
 
-echo "Starting TurtleBot3 Gazebo test..."
+echo "🚀 Running TurtleBot3 Spawn Test..."
 
-# Run the container and check if the robot spawns correctly
-docker run --rm -it tb3_sim bash -c "
-    gazebo --verbose /usr/share/gazebo-11/worlds/empty.world &
-    sleep 5
-    ros2 run gazebo_ros spawn_entity.py -entity tb3 -file /opt/ros/humble/share/turtlebot3_description/urdf/turtlebot3_burger.urdf
+# Set TurtleBot3 model (optional override)
+export TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL:-burger}
+
+# Run the container and check if TurtleBot3 spawns correctly
+docker run --rm -it --name tb3_test \
+    -e TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL} \
+    tb3_sim bash -c "
+    source /opt/ros/humble/setup.bash;
+    
+    echo '📡 Checking if Gazebo is running...';
+    pgrep gzserver || (echo '❌ Gazebo is not running!' && exit 1);
+
+    echo '🤖 Spawning TurtleBot3...';
+    ros2 run gazebo_ros spawn_entity.py -entity tb3 \
+        -file /opt/ros/humble/share/turtlebot3_description/urdf/turtlebot3_${TURTLEBOT3_MODEL}.urdf;
+
+    echo '✅ Spawn test completed successfully!'
 "
 
-echo "✅ Test Passed: TurtleBot3 spawned successfully!"
+echo "🎉 TurtleBot3 Spawn Test PASSED!"
