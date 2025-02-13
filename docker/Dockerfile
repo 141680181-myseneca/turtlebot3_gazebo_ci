@@ -1,13 +1,15 @@
 # Use the official ROS 2 Humble Desktop image with Gazebo
 FROM osrf/ros:humble-desktop
 
-# Install required dependencies for TurtleBot3 and Gazebo
+# Install required dependencies for TurtleBot3, Gazebo, and headless support
 RUN apt-get update && apt-get install -y \
     ros-humble-gazebo-ros-pkgs \
     ros-humble-turtlebot3-gazebo \
     ros-humble-turtlebot3-msgs \
     ros-humble-turtlebot3-simulations \
-    ros-humble-turtlebot3-description && \
+    ros-humble-turtlebot3-description \
+    xvfb \
+    lsof && \  # 🔹 Install `lsof` to check for running ports
     rm -rf /var/lib/apt/lists/*
 
 # Install system dependencies separately (including xvfb)

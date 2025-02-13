@@ -109,3 +109,9 @@ exec "$@"
 # Xvfb Server Already Running	Check if /tmp/.X99-lock exists & remove it before starting
 # Gazebo "Address already in use" error	Kill old Gazebo processes & bind to a new port if needed
 # Entity [tb3] already exists	Remove existing TurtleBot3 entities before spawning
+
+# Issue	Fix
+# lsof missing (skipping port check)	Install lsof in Dockerfile
+# Xvfb Server Already Running	Check if /tmp/.X99-lock exists & remove it before starting
+# Gazebo "Address already in use" error	Kill old Gazebo processes & bind to a new port if needed
+# Entity [tb3] already exists	Remove existing TurtleBot3 entities before spawning
