@@ -9,6 +9,7 @@ source /opt/ros/humble/setup.bash
 # Set the correct TurtleBot3 model (default: burger)
 export TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL:-burger}
 
+
 # Disable rendering for headless mode
 export DISPLAY=:99
 export QT_QPA_PLATFORM=offscreen
