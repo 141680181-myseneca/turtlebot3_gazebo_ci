@@ -16,7 +16,7 @@ turtlebot3_gazebo_ci/
 │   └── test_robot_spawn.sh         # Test if TurtleBot3 spawns in Gazebo
 ├── README.md                       # Project documentation
 └── .gitignore                      # Ignore unnecessary files
-```
+~~~
 
 ## 🚀 📂 Container Filesystem Structure
 Once the Docker container is running, its internal filesystem will look like this:
@@ -39,7 +39,7 @@ Once the Docker container is running, its internal filesystem will look like thi
 │   │   │   ├── worlds/
 │   │   │   │   ├── empty.world       # Default world used by simulation
 ├── entrypoint.sh                      # Custom script to start the robot
-```
+~~~
 
 ![TurtleBot3 Gazebo](https://user-images.githubusercontent.com/your-image-url.png)  
 *A fully automated CI/CD pipeline for running TurtleBot3 simulations using Docker and GitHub Actions.*
