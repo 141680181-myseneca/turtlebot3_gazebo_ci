@@ -25,6 +25,11 @@ export SVGA_VGPU10=0  # Prevents crashes in virtualized environments
 echo "🛠️ Using TurtleBot3 Model: $TURTLEBOT3_MODEL"
 
 # 🔹 Ensure Xvfb isn't already running
+if [ -f "/tmp/.X99-lock" ]; then
+    echo "🛑 Removing stale Xvfb lock file..."
+    rm -f /tmp/.X99-lock
+fi
+
 if pgrep Xvfb > /dev/null; then
     echo "⚠️ Xvfb is already running, skipping..."
 else
@@ -39,7 +44,7 @@ pkill -f gzclient || true
 sleep 2  # Give it time to fully terminate
 
 # 🔹 Ensure Gazebo binds to a different port if the default is already in use
-if ss -tulnp | grep -q ":11345"; then
+if netstat -tulnp | grep -q ":11345"; then
     echo "⚠️ Port 11345 is already in use. Binding Gazebo to a new port..."
     export GAZEBO_MASTER_URI=http://127.0.0.1:11346
 else
