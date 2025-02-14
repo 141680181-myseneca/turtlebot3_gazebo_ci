@@ -114,5 +114,5 @@ git push origin turtlebot3_gazebo_ci
 To test if the robot spawns correctly inside Gazebo:
 
 ~~~bash
-docker run --rm -it tb3_sim bash -c "ros2 run gazebo_ros spawn_entity.py -entity tb3 -file /opt/ros/humble/share/turtlebot3_description/urdf/turtlebot3_burger.urdf"
+docker run --rm tb3_sim bash -c "ros2 run gazebo_ros spawn_entity.py -entity tb3 -file /opt/ros/humble/share/turtlebot3_description/urdf/turtlebot3_burger.urdf"
 ~~~
