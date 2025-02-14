@@ -13,71 +13,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Checkout your repo so Dockerfile and scripts are available
+      # 1) Checkout the repository (to get the Dockerfile and scripts)
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      # 2) (Optional) Example of forcing bash for a custom script
-      - name: Build and Run (Example Step)
-        run: docker build -t tb3_sim ./docker
-
-      - name: 🔧 Make entrypoint.sh Executable & Run It
-        shell: bash
-        run: |
-          echo "Using Bash instead of sh"
-          chmod +x docker/entrypoint.sh
-          ./docker/entrypoint.sh
-    
-
-      # 3) Set up Docker BuildX
+      # 2) Set up Docker BuildX
       - name: 🛠️ Set up Docker BuildX
         uses: docker/setup-buildx-action@v3
 
-      # 4) Build Docker Image
+      # 3) Build the Docker image
       - name: 🏗️ Build Docker Image
-        run: |
-          docker build -t tb3_sim ./docker
+        run: docker build -t tb3_sim ./docker
 
-      # 5) Run Simulation in Headless Mode (Sanity Check)
+      # 4) Run the simulation container in headless mode (using the container’s entrypoint)
       - name: 🚀 Run Simulation in Headless Mode (Sanity Check)
         run: |
           docker run --rm --name tb3_sim \
             -e TURTLEBOT3_MODEL=burger \
-            tb3_sim \
-            bash -c "
-            source /opt/ros/humble/setup.bash
+            tb3_sim
 
-            # Start a virtual display
-            Xvfb :99 -screen 0 1024x768x24 &
-            sleep 2
-
-            # Launch Gazebo server in headless mode
-            gzserver --headless /usr/share/gazebo-11/worlds/empty.world &
-            sleep 5
-
-            # Spawn TurtleBot3
-            ros2 run gazebo_ros spawn_entity.py -entity tb3 \
-              -file /opt/ros/humble/share/turtlebot3_description/urdf/turtlebot3_burger.urdf
-            echo '✅ TurtleBot3 spawn successful!'
-
-            # (Optional) run any quick checks here...
-
-            # Kill Gazebo so the container can exit
-            pkill -9 gzserver || true
-            pkill -9 gzclient || true
-
-            # Kill Xvfb as well
-            pkill -9 -f 'Xvfb :99' || true
-
-            exit 0
-            "
-
-      # 6) (Optional) Additional test script
+      # 5) (Optional) Run a spawn test script
       - name: ✅ Run TurtleBot3 Spawn Test
-        run: |
-          bash tests/test_robot_spawn.sh
+        run: bash tests/test_robot_spawn.sh
 
-      # 7) Clean up Docker
+      # 6) Clean up Docker
       - name: 🧹 Clean Up Docker
         if: always()
         run: docker system prune -f
